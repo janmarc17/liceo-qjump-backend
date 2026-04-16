@@ -574,6 +574,33 @@ async function getStats(req, res) {
   }
 }
 
+async function getDailyQueueStats(req, res) {
+  try {
+    const userRole = req.user?.role || 'Student';
+
+    if (userRole !== 'Administrator') {
+      return res.status(403).json({ message: 'Unauthorized: Only administrators can access daily queue statistics' });
+    }
+
+    const [rows] = await db.query(
+      `SELECT DATE(time_joined) AS date, COUNT(*) AS total
+       FROM queue_entries
+       GROUP BY DATE(time_joined)
+       ORDER BY date ASC`
+    );
+
+    const dailyStats = rows.map((row) => ({
+      date: row.date ? new Date(row.date).toISOString().slice(0, 10) : null,
+      total: Number(row.total) || 0
+    })).filter((row) => row.date !== null);
+
+    return res.json(dailyStats);
+  } catch (err) {
+    console.error('getDailyQueueStats error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+}
+
 async function callNextQueue(req, res, wss) {
   try {
     const userRole = req.user?.role;
@@ -848,6 +875,7 @@ module.exports = {
   getAdminQueueHistory,
   getAllQueues,
   getStats,
+  getDailyQueueStats,
   getTimeoutConfig,
   setTimeoutConfig,
   callNextQueue,

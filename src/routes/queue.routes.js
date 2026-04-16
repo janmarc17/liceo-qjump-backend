@@ -14,6 +14,7 @@ const {
   getAdminQueueHistory,
   getAllQueues,
   getStats,
+  getDailyQueueStats,
   getTimeoutConfig,
   setTimeoutConfig,
   callNextQueue,
@@ -31,6 +32,7 @@ router.get('/history', authMiddleware, (req, res) => getQueueHistory(req, res));
 // Role-aware dashboard routes
 router.get('/all', authMiddleware, roleMiddleware(['Administrator', 'Registrar', 'Cashier']), (req, res) => getAllQueues(req, res));
 router.get('/stats', authMiddleware, roleMiddleware(['Administrator', 'Registrar', 'Cashier']), (req, res) => getStats(req, res));
+router.get('/stats/daily', authMiddleware, roleMiddleware(['Administrator']), (req, res) => getDailyQueueStats(req, res));
 router.get('/history-admin', authMiddleware, roleMiddleware(['Administrator']), (req, res) => getAdminQueueHistory(req, res));
 
 // Role-specific queue operations (Admin can manage both, staff can manage only their own counter)

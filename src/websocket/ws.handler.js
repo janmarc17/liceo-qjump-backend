@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const initWebSocket = (wss) => {
   wss.on('connection', (ws, req) => {
-    console.log('[WS] New client connected');
+    // [WS] New client connected (log removed)
 
     const url = new URL(req.url, 'http://localhost');
     const token = url.searchParams.get('token');
@@ -11,9 +11,9 @@ const initWebSocket = (wss) => {
     if (token) {
       try {
         ws.user = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(`[WS] Authenticated user: ${ws.user.studentId}`);
+        // [WS] Authenticated user: ${ws.user.studentId} (log removed)
       } catch {
-        console.log('[WS] Invalid token — unauthenticated connection');
+        // [WS] Invalid token — unauthenticated connection (log removed)
       }
     }
 
@@ -29,11 +29,11 @@ const initWebSocket = (wss) => {
     });
 
     ws.on('close', () => {
-      console.log('[WS] Client disconnected');
+      // [WS] Client disconnected (log removed)
     });
 
     ws.on('error', (err) => {
-      console.error('[WS] Error:', err);
+      // [WS] Error: (log removed)
     });
 
     ws.send(JSON.stringify({
